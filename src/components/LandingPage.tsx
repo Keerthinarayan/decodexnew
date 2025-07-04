@@ -69,7 +69,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate, onTeamLogin }) =>
       {/* Main Content - Centered */}
       <div className="min-h-screen flex flex-col items-center justify-center px-4">
         {/* Ornate Header */}
-        <div className="text-center mb-12 vintage-float">
+        <div className="text-center mb-12"> {/* 'vintage-float' removed to stop wobbling */}
           <div className="vintage-card rounded-lg p-8 max-w-4xl mx-auto">
             {/* Decorative border */}
             <div className="border-4 border-double border-vintage-brown p-6 rounded-lg">
