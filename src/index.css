@@ -1,0 +1,657 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Special+Elite&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Vintage Detective Theme Variables */
+:root {
+  --vintage-paper: #f4f1e8;
+  --vintage-cream: #faf8f3;
+  --vintage-brown: #8b4513;
+  --vintage-dark-brown: #654321;
+  --vintage-gold: #d4af37;
+  --vintage-red: #8b0000;
+  --vintage-green: #2d5016;
+  --vintage-blue: #1e3a5f;
+  --vintage-black: #2c1810;
+  --vintage-gray: #6b5b47;
+  --vintage-light-gray: #a69b8a;
+  --newspaper-shadow: 0 4px 8px rgba(44, 24, 16, 0.3);
+  --ink-stain: radial-gradient(circle, rgba(44, 24, 16, 0.1) 0%, transparent 70%);
+}
+
+/* Base styles with vintage typography */
+body {
+  font-family: 'Crimson Text', serif;
+  background: var(--vintage-paper);
+  color: var(--vintage-black);
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+    linear-gradient(45deg, transparent 49%, rgba(139, 69, 19, 0.02) 50%, transparent 51%);
+}
+
+/* Vintage paper texture background */
+.vintage-paper {
+  background: var(--vintage-paper);
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+    linear-gradient(0deg, transparent 24%, rgba(139, 69, 19, 0.05) 25%, rgba(139, 69, 19, 0.05) 26%, transparent 27%, transparent 74%, rgba(139, 69, 19, 0.05) 75%, rgba(139, 69, 19, 0.05) 76%, transparent 77%);
+}
+
+/* Newspaper column styling */
+.newspaper-column {
+  background: var(--vintage-cream);
+  border: 2px solid var(--vintage-brown);
+  box-shadow: var(--newspaper-shadow);
+  position: relative;
+}
+
+.newspaper-column::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 24px,
+      rgba(139, 69, 19, 0.1) 25px
+    );
+  pointer-events: none;
+}
+
+/* Vintage headings */
+.vintage-headline {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--vintage-black);
+  text-shadow: 2px 2px 4px rgba(139, 69, 19, 0.3);
+  position: relative;
+}
+
+.vintage-headline::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--vintage-brown), var(--vintage-gold), var(--vintage-brown));
+}
+
+/* Typewriter font for special elements */
+.typewriter {
+  font-family: 'Special Elite', monospace;
+  color: var(--vintage-black);
+}
+
+/* Vintage buttons */
+.vintage-btn {
+  background: linear-gradient(145deg, var(--vintage-cream), var(--vintage-paper));
+  border: 2px solid var(--vintage-brown);
+  color: var(--vintage-black);
+  font-family: 'Crimson Text', serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--newspaper-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.vintage-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.vintage-btn:hover::before {
+  left: 100%;
+}
+
+.vintage-btn:hover {
+  background: linear-gradient(145deg, var(--vintage-paper), var(--vintage-cream));
+  border-color: var(--vintage-gold);
+  color: var(--vintage-dark-brown);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(44, 24, 16, 0.4);
+}
+
+/* Vintage cards */
+.vintage-card {
+  background: var(--vintage-cream);
+  border: 3px double var(--vintage-brown);
+  box-shadow: var(--newspaper-shadow);
+  position: relative;
+}
+
+.vintage-card::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border: 1px solid var(--vintage-brown);
+  pointer-events: none;
+}
+
+/* Ornate decorative elements */
+.ornate-border {
+  border: 3px solid var(--vintage-brown);
+  border-image: repeating-linear-gradient(45deg, var(--vintage-brown), var(--vintage-brown) 10px, var(--vintage-gold) 10px, var(--vintage-gold) 20px) 3;
+}
+
+/* Vintage form inputs */
+.vintage-input {
+  background: var(--vintage-cream);
+  border: 2px solid var(--vintage-brown);
+  color: var(--vintage-black);
+  font-family: 'Crimson Text', serif;
+  box-shadow: inset 2px 2px 4px rgba(139, 69, 19, 0.2);
+}
+
+.vintage-input:focus {
+  outline: none;
+  border-color: var(--vintage-gold);
+  box-shadow: inset 2px 2px 4px rgba(139, 69, 19, 0.2), 0 0 8px rgba(212, 175, 55, 0.3);
+}
+
+/* Vintage scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vintage-paper);
+  border: 1px solid var(--vintage-brown);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--vintage-brown), var(--vintage-dark-brown));
+  border-radius: 6px;
+  border: 1px solid var(--vintage-gold);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--vintage-dark-brown), var(--vintage-brown));
+}
+
+/* Vintage animations */
+@keyframes vintageFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+.vintage-float {
+  animation: vintageFloat 4s ease-in-out infinite;
+}
+
+@keyframes inkSpread {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ink-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.ink-effect::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, var(--vintage-black) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: inkSpread 0.6s ease-out;
+  pointer-events: none;
+}
+
+/* Vintage glow effects */
+.vintage-glow {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+}
+
+.vintage-glow-red {
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+}
+
+.vintage-glow-green {
+  box-shadow: 0 0 20px rgba(45, 80, 22, 0.5);
+}
+
+/* Newspaper print effects */
+.newspaper-print {
+  background: var(--vintage-cream);
+  background-image: 
+    radial-gradient(circle at 1px 1px, var(--vintage-black) 1px, transparent 0);
+  background-size: 20px 20px;
+  opacity: 0.1;
+}
+
+/* Vintage table styling */
+.vintage-table {
+  background: var(--vintage-cream);
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 3px solid var(--vintage-brown);
+}
+
+.vintage-table th,
+.vintage-table td {
+  border-bottom: 1px solid var(--vintage-brown);
+  border-right: 1px solid var(--vintage-brown);
+  padding: 12px;
+  font-family: 'Crimson Text', serif;
+}
+
+.vintage-table th {
+  background: linear-gradient(145deg, var(--vintage-brown), var(--vintage-dark-brown));
+  color: var(--vintage-cream);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.vintage-table tr:nth-child(even) {
+  background: rgba(139, 69, 19, 0.05);
+}
+
+.vintage-table tr:hover {
+  background: rgba(212, 175, 55, 0.1);
+}
+
+/* Vintage modal backdrop */
+.vintage-modal-backdrop {
+  background: rgba(44, 24, 16, 0.8);
+  backdrop-filter: sepia(100%) contrast(120%);
+}
+
+/* Old paper texture animation */
+@keyframes paperFlutter {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(0.5deg);
+  }
+  75% {
+    transform: rotate(-0.5deg);
+  }
+}
+
+.paper-flutter {
+  animation: paperFlutter 6s ease-in-out infinite;
+}
+
+/* Newspaper unfolding animation */
+@keyframes newspaperUnfold {
+  0% {
+    transform: scale(0.8) rotateY(-15deg) rotateX(5deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(0.95) rotateY(-5deg) rotateX(2deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1) rotateY(0deg) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+.newspaper-unfold {
+  animation: newspaperUnfold 0.8s ease-out;
+}
+
+/* Newspaper flying in animation */
+@keyframes newspaperFlyIn {
+  0% {
+    transform: translateX(100vw) rotate(45deg) scale(0.5);
+    opacity: 0;
+  }
+  60% {
+    transform: translateX(-20px) rotate(-5deg) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.newspaper-fly-in {
+  animation: newspaperFlyIn 1s ease-out;
+}
+
+/* Vintage progress bars */
+.vintage-progress {
+  background: var(--vintage-paper);
+  border: 2px solid var(--vintage-brown);
+  height: 8px;
+  overflow: hidden;
+}
+
+.vintage-progress-fill {
+  background: linear-gradient(90deg, var(--vintage-brown), var(--vintage-gold), var(--vintage-brown));
+  height: 100%;
+  transition: width 1s ease-out;
+}
+
+/* Vintage badges */
+.vintage-badge {
+  background: linear-gradient(145deg, var(--vintage-gold), #b8941f);
+  color: var(--vintage-black);
+  border: 2px solid var(--vintage-brown);
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--newspaper-shadow);
+}
+
+/* Vintage loading spinner */
+@keyframes vintageSpinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.vintage-spinner {
+  border: 4px solid var(--vintage-paper);
+  border-top: 4px solid var(--vintage-brown);
+  border-radius: 50%;
+  animation: vintageSpinner 1s linear infinite;
+}
+
+/* Vintage toast notifications */
+.vintage-toast {
+  background: var(--vintage-cream);
+  border: 2px solid var(--vintage-brown);
+  box-shadow: var(--newspaper-shadow);
+  font-family: 'Crimson Text', serif;
+}
+
+.vintage-toast-success {
+  border-color: var(--vintage-green);
+  background: linear-gradient(145deg, #f0f8e8, var(--vintage-cream));
+}
+
+.vintage-toast-error {
+  border-color: var(--vintage-red);
+  background: linear-gradient(145deg, #f8e8e8, var(--vintage-cream));
+}
+
+.vintage-toast-info {
+  border-color: var(--vintage-blue);
+  background: linear-gradient(145deg, #e8f0f8, var(--vintage-cream));
+}
+
+/* Vintage power-up effects */
+.vintage-powerup {
+  background: radial-gradient(circle, var(--vintage-gold), #b8941f);
+  border: 3px solid var(--vintage-brown);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+}
+
+/* Vintage media controls */
+.vintage-media-controls {
+  background: linear-gradient(145deg, var(--vintage-brown), var(--vintage-dark-brown));
+  border: 2px solid var(--vintage-gold);
+  color: var(--vintage-cream);
+}
+
+/* Vintage leaderboard styling */
+.vintage-rank-1 {
+  background: linear-gradient(145deg, var(--vintage-gold), #b8941f);
+  color: var(--vintage-black);
+  border: 3px solid var(--vintage-brown);
+}
+
+.vintage-rank-2 {
+  background: linear-gradient(145deg, #c0c0c0, #a0a0a0);
+  color: var(--vintage-black);
+  border: 3px solid var(--vintage-brown);
+}
+
+.vintage-rank-3 {
+  background: linear-gradient(145deg, #cd7f32, #b8691e);
+  color: var(--vintage-cream);
+  border: 3px solid var(--vintage-brown);
+}
+
+/* Vintage question interface */
+.vintage-question-card {
+  background: var(--vintage-cream);
+  border: 4px double var(--vintage-brown);
+  box-shadow: var(--newspaper-shadow);
+  position: relative;
+}
+
+.vintage-question-card::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  border: 1px solid var(--vintage-brown);
+  pointer-events: none;
+}
+
+/* Vintage starfield replacement with old map dots */
+.vintage-map-dots {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 30%, var(--vintage-brown) 1px, transparent 1px),
+    radial-gradient(circle at 70% 60%, var(--vintage-brown) 1px, transparent 1px),
+    radial-gradient(circle at 40% 80%, var(--vintage-brown) 1px, transparent 1px),
+    radial-gradient(circle at 90% 20%, var(--vintage-brown) 1px, transparent 1px),
+    radial-gradient(circle at 10% 70%, var(--vintage-brown) 1px, transparent 1px);
+  background-size: 200px 200px, 300px 300px, 250px 250px, 180px 180px, 220px 220px;
+  opacity: 0.3;
+  animation: vintageFloat 8s ease-in-out infinite;
+}
+
+/* Vintage admin panel styling */
+.vintage-admin-panel {
+  background: var(--vintage-paper);
+  background-image: 
+    linear-gradient(45deg, transparent 49%, rgba(139, 69, 19, 0.1) 50%, transparent 51%),
+    linear-gradient(-45deg, transparent 49%, rgba(139, 69, 19, 0.1) 50%, transparent 51%);
+  background-size: 20px 20px;
+}
+
+/* Vintage form styling */
+.vintage-form {
+  background: var(--vintage-cream);
+  border: 3px double var(--vintage-brown);
+  box-shadow: var(--newspaper-shadow);
+}
+
+.vintage-form label {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  color: var(--vintage-dark-brown);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Vintage success/error states */
+.vintage-success {
+  background: linear-gradient(145deg, #f0f8e8, var(--vintage-cream));
+  border: 2px solid var(--vintage-green);
+  color: var(--vintage-green);
+}
+
+.vintage-error {
+  background: linear-gradient(145deg, #f8e8e8, var(--vintage-cream));
+  border: 2px solid var(--vintage-red);
+  color: var(--vintage-red);
+}
+
+/* Vintage transition effects */
+.vintage-transition {
+  transition: all 0.3s ease;
+}
+
+.vintage-transition:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(44, 24, 16, 0.3);
+}
+
+/* Newspaper announcement specific styles */
+.announcement-newspaper {
+  background: var(--vintage-cream);
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 24px,
+      rgba(139, 69, 19, 0.1) 25px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 1px,
+      rgba(139, 69, 19, 0.05) 2px
+    );
+}
+
+/* First letter styling for newspaper articles */
+.prose-vintage p:first-child::first-letter {
+  font-family: 'Playfair Display', serif;
+  font-size: 4rem;
+  font-weight: 900;
+  float: left;
+  line-height: 1;
+  margin-right: 8px;
+  margin-top: 4px;
+  color: var(--vintage-brown);
+  text-shadow: 2px 2px 4px rgba(139, 69, 19, 0.3);
+}
+
+/* Newspaper fold lines */
+.newspaper-fold::before {
+  content: '';
+  position: absolute;
+  top: 33%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(139, 69, 19, 0.2);
+  pointer-events: none;
+}
+
+.newspaper-fold::after {
+  content: '';
+  position: absolute;
+  top: 66%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(139, 69, 19, 0.2);
+  pointer-events: none;
+}
+
+/* Responsive vintage design */
+@media (max-width: 768px) {
+  .vintage-headline {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+  }
+  
+  .newspaper-column {
+    border-width: 1px;
+  }
+  
+  .vintage-card::before {
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+  }
+  
+  .prose-vintage p:first-child::first-letter {
+    font-size: 3rem;
+  }
+}
+
+/* Vintage announcement modal animations */
+@keyframes newspaperSlideIn {
+  0% {
+    transform: translateY(-100vh) rotate(-10deg) scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(20px) rotate(2deg) scale(1.02);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.newspaper-slide-in {
+  animation: newspaperSlideIn 0.8s ease-out;
+}
+
+/* Urgent announcement special effects */
+@keyframes urgentPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(139, 0, 0, 0.8);
+  }
+}
+
+.urgent-pulse {
+  animation: urgentPulse 2s ease-in-out infinite;
+}
+
+/* Vintage stamp effect */
+.vintage-stamp {
+  transform: rotate(12deg);
+  border: 4px solid var(--vintage-red);
+  background: rgba(139, 0, 0, 0.1);
+  font-family: 'Special Elite', monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  box-shadow: inset 0 0 10px rgba(139, 0, 0, 0.3);
+}
