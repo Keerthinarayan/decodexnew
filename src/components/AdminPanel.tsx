@@ -109,10 +109,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
 
   const loadChoiceQuestions = async () => {
     try {
+      // Admin panel needs full question data including answers
       const { data, error } = await supabase
-        .from('admin_choice_questions')
+        .from('admin_questions')
         .select('*')
-        .order('branch_question_title', { ascending: true });
+        .order('order_index');
 
       if (error) throw error;
       setChoiceQuestions(data || []);
