@@ -45,25 +45,14 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       const { data: { user } } = await supabase.auth.getUser();
       let questionsData;
       
-      if (user) {
-        // Admin user - can see questions with answers
-        const { data, error } = await supabase
-          .from('questions')
-          .select('*')
-          .order('order_index');
-        
-        if (error) throw error;
-        questionsData = data;
-      } else {
-        // Public user - use secure view without answers
-        const { data, error } = await supabase
-          .from('public_questions')
-          .select('*')
-          .order('order_index');
-        
-        if (error) throw error;
-        questionsData = data;
-      }
+      // Always use secure view for players - answers are only needed server-side
+      const { data, error } = await supabase
+        .from('public_questions_secure')
+        .select('*')
+        .order('order_index');
+      
+      if (error) throw error;
+      questionsData = data;
 
       // Load game settings
       const { data: gameSettingsData, error: gameSettingsError } = await supabase
