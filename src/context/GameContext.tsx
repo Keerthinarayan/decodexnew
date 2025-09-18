@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
-import { Team, Question, GameState, GameContextType, QuestionPathEntry } from '../types/game';
+import { Team, Question, GameState, GameContextType } from '../types/game';
 
 const GameContext = createContext<GameContextType | null>(null);
 
@@ -41,18 +41,13 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
 
       if (teamsError) throw teamsError;
 
-      // Load questions - Use admin view for authenticated users, public view for others
-      const { data: { user } } = await supabase.auth.getUser();
-      let questionsData;
-      
-      // Always use secure view for players - answers are only needed server-side
-      const { data, error } = await supabase
-        .from('public_questions_secure')
-        .select('*')
-        .order('order_index');
-      
-      if (error) throw error;
-      questionsData = data;
+      // IMPORTANT: Do not fetch the full list of questions for players.
+      // We no longer load from `public_questions_secure` to avoid exposing
+      // all questions in the Network tab. The UI should retrieve only the
+      // current question via RPC (e.g., get_next_question_for_team).
+      // Keep an empty list here to enable a skeleton/placeholder map.
+  // No user-specific filtering here; questions list intentionally empty.
+  let questionsData: any[] = [];
 
       // Load game settings
       const { data: gameSettingsData, error: gameSettingsError } = await supabase
@@ -67,7 +62,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       }
 
       // Transform data to match frontend types
-      const transformedTeams: Team[] = (teamsData || []).map(team => ({
+  const transformedTeams: Team[] = (teamsData || []).map((team: any) => ({
         name: team.name,
         email: team.email,
         password: '', // Don't store passwords in frontend
@@ -87,7 +82,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
         currentQuestionId: team.current_question_id
       }));
 
-      const transformedQuestions: Question[] = (questionsData || []).map(question => ({
+  const transformedQuestions: Question[] = (questionsData || []).map((question: any) => ({
         id: question.id,
         title: question.title,
         question: question.question,
@@ -161,7 +156,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       .channel('game_settings_changes')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: 'game_settings' },
-        (payload) => {
+        (payload: any) => {
           console.log('Game settings changed:', payload);
           // Only update state if we have valid new data
           if (payload.new && typeof payload.new.quiz_active === 'boolean') {
@@ -195,7 +190,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       // Hash the password before storing
       const hashedPassword = hashPassword(password);
       
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('teams')
         .insert({
           name,
@@ -219,7 +214,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       }
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
       return false;
     }
@@ -254,7 +249,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
         console.log('Invalid password for team:', name);
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
       return false;
     }
@@ -277,7 +272,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       await loadInitialData();
       
       return data || { success: false };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Submit answer error:', error);
       return { success: false, error: error.message };
     }
@@ -319,7 +314,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
 
       if (type === 'skip') {
         // Use enhanced server-side function for skipping with branching support
-        const { data, error } = await supabase.rpc('skip_question_with_branching', {
+        const { error } = await supabase.rpc('skip_question_with_branching', {
           p_team_name: teamName
         });
 
@@ -353,7 +348,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       await loadInitialData();
       
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Use power-up error:', error);
       return false;
     }
@@ -428,7 +423,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       
       // Force immediate reload of data without affecting UI state
       await loadInitialData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Add question error:', error);
     }
   };
@@ -465,7 +460,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
 
       // Step 3: Update any teams that might be referencing choice questions
       if (choiceQuestions && choiceQuestions.length > 0) {
-        const choiceQuestionIds = choiceQuestions.map(cq => cq.id);
+        const choiceQuestionIds = choiceQuestions.map((cq: any) => cq.id);
         
         for (const choiceId of choiceQuestionIds) {
           const { error: updateTeamsChoiceError } = await supabase
@@ -519,7 +514,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       
       // Force immediate reload of data
       await loadInitialData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Delete question error:', error);
       throw error;
     }
@@ -553,7 +548,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       
       // Force immediate reload of data
       await loadInitialData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Reorder questions error:', error);
     }
   };
@@ -575,7 +570,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       
       // Force immediate reload of data
       await loadInitialData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Grant power-up error:', error);
     }
   };
@@ -621,7 +616,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
           console.log('Successfully created game settings with ID:', data.id);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Update quiz settings error:', error);
       throw error;
     }
@@ -636,7 +631,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       // Then update database
       await updateQuizSettings(active, quizPaused);
       console.log('Quiz active state updated successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update quiz active state:', error);
       // Revert local state on error
       setQuizActive(!active);
@@ -653,7 +648,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       // Then update database
       await updateQuizSettings(quizActive, paused);
       console.log('Quiz paused state updated successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update quiz paused state:', error);
       // Revert local state on error
       setQuizPaused(!paused);
