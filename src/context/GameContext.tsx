@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
-import { Team, Question, GameState, GameContextType } from '../types/game';
+import { Team, Question, GameState, GameContextType, QuestionPathEntry } from '../types/game';
 
 const GameContext = createContext<GameContextType | null>(null);
 
@@ -24,7 +24,6 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   const [quizPaused, setQuizPaused] = useState(false);
   const [loading, setLoading] = useState(true);
   const [gameSettingsId, setGameSettingsId] = useState<string | null>(null);
-  const [totalQuestions, setTotalQuestions] = useState<number | null>(null);
 
   // Load initial data
   useEffect(() => {
@@ -42,19 +41,18 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
 
       if (teamsError) throw teamsError;
 
-      // Load questions for admin only. Players should NOT load all questions.
-      // Players will fetch only the current question via RPC in QuestionInterface.
-      const { data: userData } = await supabase.auth.getUser();
-      const isAdmin = !!userData?.user;
-      let adminQuestions: any[] = [];
-      if (isAdmin) {
-        const { data: adminQs, error: adminQsError } = await supabase
-          .from('admin_questions')
-          .select('*')
-          .order('order_index');
-        if (adminQsError) throw adminQsError;
-        adminQuestions = adminQs || [];
-      }
+      // Load questions - Use admin view for authenticated users, public view for others
+      const { data: { user } } = await supabase.auth.getUser();
+      let questionsData;
+      
+      // Always use secure view for players - answers are only needed server-side
+      const { data, error } = await supabase
+        .from('public_questions_secure')
+        .select('*')
+        .order('order_index');
+      
+      if (error) throw error;
+      questionsData = data;
 
       // Load game settings
       const { data: gameSettingsData, error: gameSettingsError } = await supabase
@@ -69,7 +67,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       }
 
       // Transform data to match frontend types
-  const transformedTeams: Team[] = (teamsData || []).map((team: any) => ({
+      const transformedTeams: Team[] = (teamsData || []).map(team => ({
         name: team.name,
         email: team.email,
         password: '', // Don't store passwords in frontend
@@ -89,11 +87,11 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
         currentQuestionId: team.current_question_id
       }));
 
-      const transformedQuestions: Question[] = (isAdmin ? adminQuestions : []).map((question: any) => ({
+      const transformedQuestions: Question[] = (questionsData || []).map(question => ({
         id: question.id,
         title: question.title,
         question: question.question,
-        answer: question.answer || '',
+        answer: question.answer || '', // Will be empty for non-admin users
         hint: question.hint || undefined,
         type: question.type as any,
         mediaUrl: question.media_url || undefined,
@@ -124,22 +122,6 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
         console.log('No game settings found, using defaults');
         setQuizActive(false);
         setQuizPaused(false);
-      }
-
-      // Load total questions count via secure RPC (does not leak content)
-      try {
-        const { data: totalCount, error: totalError } = await supabase.rpc('get_total_questions');
-        if (totalError) {
-          console.warn('Could not load total questions count:', totalError.message);
-          setTotalQuestions(null);
-        } else {
-          // Some PostgREST versions return scalar in data, others wrap; handle both
-          const countValue = typeof totalCount === 'number' ? totalCount : (Array.isArray(totalCount) ? totalCount[0] : null);
-          setTotalQuestions(countValue as number);
-        }
-      } catch (e) {
-        console.warn('Error fetching total questions count:', e);
-        setTotalQuestions(null);
       }
     } catch (error) {
       console.error('Error loading initial data:', error);
@@ -179,7 +161,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       .channel('game_settings_changes')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: 'game_settings' },
-  (payload: any) => {
+        (payload) => {
           console.log('Game settings changed:', payload);
           // Only update state if we have valid new data
           if (payload.new && typeof payload.new.quiz_active === 'boolean') {
@@ -213,7 +195,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       // Hash the password before storing
       const hashedPassword = hashPassword(password);
       
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('teams')
         .insert({
           name,
@@ -297,8 +279,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       return data || { success: false };
     } catch (error) {
       console.error('Submit answer error:', error);
-      const message = error instanceof Error ? error.message : String(error);
-      return { success: false, error: message };
+      return { success: false, error: error.message };
     }
   };
 
@@ -338,7 +319,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
 
       if (type === 'skip') {
         // Use enhanced server-side function for skipping with branching support
-        const { error } = await supabase.rpc('skip_question_with_branching', {
+        const { data, error } = await supabase.rpc('skip_question_with_branching', {
           p_team_name: teamName
         });
 
@@ -484,7 +465,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
 
       // Step 3: Update any teams that might be referencing choice questions
       if (choiceQuestions && choiceQuestions.length > 0) {
-  const choiceQuestionIds = choiceQuestions.map((cq: any) => cq.id);
+        const choiceQuestionIds = choiceQuestions.map(cq => cq.id);
         
         for (const choiceId of choiceQuestionIds) {
           const { error: updateTeamsChoiceError } = await supabase
@@ -708,7 +689,6 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
     gameState,
     quizActive,
     quizPaused,
-    totalQuestions,
     loading,
     loadInitialData, // Expose this function for manual refresh
     setQuizActive: setQuizActiveHandler,

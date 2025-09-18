@@ -96,7 +96,6 @@ export interface GameContextType {
   gameState: GameState;
   quizActive: boolean;
   quizPaused: boolean;
-  totalQuestions?: number | null;
   loading?: boolean;
   loadInitialData?: () => Promise<void>;
   setQuizActive: (active: boolean) => void;
