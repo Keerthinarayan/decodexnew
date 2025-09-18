@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Download, Zap, Eye, SkipForward, Send, AlertCircle, ArrowLeft, CheckCircle, ZoomIn, Play, Volume2, FileText, Scroll, Brain, Trophy, Clock, Star, FastForward } from 'lucide-react';
+import { Download, Zap, Eye, SkipForward, Send, AlertCircle, ArrowLeft, CheckCircle, ZoomIn, Play, Volume2, Brain, Trophy, Clock, Star, FastForward } from 'lucide-react';
 import { useGame } from '../context/GameContext';
 import { Question, QuestionChoice } from '../types/game';
 import { useToast } from '../hooks/useToast';
@@ -18,7 +18,7 @@ const QuestionInterface: React.FC<QuestionInterfaceProps> = ({
   teamName, 
   onBackToMap 
 }) => {
-  const { teams, submitAnswer, usePowerUp, questions } = useGame();
+  const { teams, submitAnswer, usePowerUp, questions, totalQuestions } = useGame();
   const { showSuccess, showError, showPowerUp } = useToast();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [answer, setAnswer] = useState('');
@@ -31,7 +31,7 @@ const QuestionInterface: React.FC<QuestionInterfaceProps> = ({
   const [activePowerUp, setActivePowerUp] = useState<'brainBoost' | 'hint' | 'skip' | null>(null);
   const [showTransition, setShowTransition] = useState(false);
   const [showChoices, setShowChoices] = useState(false);
-  const [answerResult, setAnswerResult] = useState<any>(null);
+  // const [answerResult, setAnswerResult] = useState<any>(null);
   const [branchChoices, setBranchChoices] = useState<QuestionChoice[]>([]);
 
   const team = teams.find(t => t.name === teamName);
@@ -99,7 +99,7 @@ const QuestionInterface: React.FC<QuestionInterfaceProps> = ({
     setActivePowerUp(null);
     setShowTransition(false);
     setShowChoices(false);
-    setAnswerResult(null);
+  // reset any transient result state
     setBranchChoices([]);
   }, [currentQuestion?.id]);
 
@@ -120,8 +120,7 @@ const QuestionInterface: React.FC<QuestionInterfaceProps> = ({
     setError('');
     setSuccess('');
     
-    const result = await submitAnswer(teamName, answer.trim());
-    setAnswerResult(result);
+  const result = await submitAnswer(teamName, answer.trim());
     
     if (result.success) {
       setIsCorrect(true);
@@ -238,15 +237,7 @@ const QuestionInterface: React.FC<QuestionInterfaceProps> = ({
     }
   };
 
-  const getMediaIcon = (type: string) => {
-    switch (type) {
-      case 'image': return <ZoomIn className="w-4 h-4" />;
-      case 'video': return <Play className="w-4 h-4" />;
-      case 'audio': return <Volume2 className="w-4 h-4" />;
-      case 'file': return <FileText className="w-4 h-4" />;
-      default: return <Download className="w-4 h-4" />;
-    }
-  };
+  // Helper was unused; remove to satisfy linter
 
   const renderMediaPreview = () => {
     if (!currentQuestion?.mediaUrl) return null;
@@ -287,7 +278,8 @@ const QuestionInterface: React.FC<QuestionInterfaceProps> = ({
                 className="max-w-full h-auto rounded-lg shadow-lg border-2 border-vintage-brown max-h-96 object-contain mx-auto"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling!.style.display = 'block';
+                  const next = e.currentTarget.nextElementSibling as HTMLElement | null;
+                  if (next) next.style.display = 'block';
                 }}
               />
               <div className="hidden vintage-error rounded-lg p-4 text-center">
@@ -332,7 +324,8 @@ const QuestionInterface: React.FC<QuestionInterfaceProps> = ({
               src={currentQuestion.mediaUrl}
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
-                e.currentTarget.nextElementSibling!.style.display = 'block';
+                const next = e.currentTarget.nextElementSibling as HTMLElement | null;
+                if (next) next.style.display = 'block';
               }}
             >
               Your viewing apparatus does not support moving pictures.
@@ -375,7 +368,8 @@ const QuestionInterface: React.FC<QuestionInterfaceProps> = ({
               src={currentQuestion.mediaUrl}
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
-                e.currentTarget.nextElementSibling!.style.display = 'block';
+                const next = e.currentTarget.nextElementSibling as HTMLElement | null;
+                if (next) next.style.display = 'block';
               }}
             >
               Your listening apparatus does not support audio recordings.
@@ -680,7 +674,9 @@ const QuestionInterface: React.FC<QuestionInterfaceProps> = ({
         isOpen={showMediaModal}
         onClose={() => setShowMediaModal(false)}
         mediaUrl={currentQuestion.mediaUrl || ''}
-        mediaType={currentQuestion.type}
+        mediaType={['image','video','audio','file'].includes(currentQuestion.type as any) 
+          ? (currentQuestion.type as 'image' | 'video' | 'audio' | 'file') 
+          : 'file'}
         title={currentQuestion.title}
       />
 
@@ -697,7 +693,7 @@ const QuestionInterface: React.FC<QuestionInterfaceProps> = ({
       <QuestionTransition
         isVisible={showTransition}
         currentQuestion={team.currentQuestion + 1}
-        totalQuestions={questions.length}
+        totalQuestions={typeof totalQuestions === 'number' ? totalQuestions : questions.length}
         score={team.score}
         onComplete={handleTransitionComplete}
       />

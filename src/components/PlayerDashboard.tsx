@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Trophy, Zap, Users, Star, Brain, Eye, SkipForward, Play, LogOut, Crown, Medal, Award, Scroll, Map } from 'lucide-react';
+import React, { useState } from 'react';
+import { Trophy, Zap, Users, Star, Brain, Eye, SkipForward, Play, LogOut, Crown, Medal, Award, Scroll, Map } from 'lucide-react';
 import { useGame } from '../context/GameContext';
 import QuestionInterface from './QuestionInterface';
 import VintageMapDots from './StarField';
@@ -13,7 +13,7 @@ interface PlayerDashboardProps {
 }
 
 const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ teamName, onNavigate }) => {
-  const { teams, questions, quizActive, quizPaused } = useGame();
+  const { teams, questions, quizActive, quizPaused, totalQuestions } = useGame();
   const [currentView, setCurrentView] = useState<'dashboard' | 'question' | 'map'>('map');
   
   const team = teams.find(t => t.name === teamName);
@@ -50,7 +50,9 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ teamName, onNavigate 
 
   const currentQuestion = questions[team.currentQuestion];
   const isQuizReady = quizActive && !quizPaused;
-  const missionComplete = team.currentQuestion >= questions.length;
+  const missionComplete = typeof totalQuestions === 'number'
+    ? team.currentQuestion >= totalQuestions
+    : team.currentQuestion >= questions.length;
 
   const getPositionIcon = (position: number) => {
     switch (position) {
@@ -84,7 +86,7 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ teamName, onNavigate 
     setCurrentView('map');
   };
 
-  const handleQuestionSelect = (index: number) => {
+  const handleQuestionSelect = (_index: number) => {
     // For now, just show info about completed questions
     // Could be extended to allow reviewing completed questions
   };
@@ -93,13 +95,12 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ teamName, onNavigate 
     setCurrentView(view);
   };
 
-  if (currentView === 'question' && currentQuestion && isQuizReady && !missionComplete) {
+  if (currentView === 'question' && isQuizReady && !missionComplete) {
     return (
       <div className="min-h-screen vintage-paper relative">
         <VintageMapDots />
         <div className="relative z-10 px-4 py-8">
           <QuestionInterface
-            question={currentQuestion}
             teamName={teamName}
             onBackToMap={handleBackToMap}
           />
@@ -236,16 +237,32 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ teamName, onNavigate 
                   </div>
                 </div>
               ) : (
-                // Investigation Map
-                <VintagePathMap
-                  questions={questions}
-                  currentQuestionIndex={team.currentQuestion}
-                  teamScore={team.score}
-                  teamName={team.name}
-                  onQuestionSelect={handleQuestionSelect}
-                  onStartCurrentQuestion={handleStartQuiz}
-                  isQuizReady={isQuizReady}
-                />
+                (questions.length > 0 ? (
+                  <VintagePathMap
+                    questions={questions}
+                    currentQuestionIndex={team.currentQuestion}
+                    teamScore={team.score}
+                    teamName={team.name}
+                    onQuestionSelect={handleQuestionSelect}
+                    onStartCurrentQuestion={handleStartQuiz}
+                    isQuizReady={isQuizReady}
+                  />
+                ) : (
+                  <div className="vintage-card rounded-lg p-8 text-center">
+                    <h2 className="vintage-headline text-3xl font-playfair mb-4">Begin Your Investigation</h2>
+                    <p className="text-vintage-gray font-crimson mb-6">
+                      Your investigation map will reveal itself as you progress. Click below to start with your first piece of evidence.
+                    </p>
+                    <RippleButton
+                      onClick={handleStartQuiz}
+                      disabled={!isQuizReady}
+                      className="vintage-btn bg-vintage-gold/20 border-vintage-gold text-vintage-gold hover:bg-vintage-gold/30 px-8 py-4 rounded-xl font-crimson font-medium transition-all duration-200 shadow-lg transform hover:scale-105"
+                      rippleColor="rgba(212, 175, 55, 0.3)"
+                    >
+                      Start Investigation
+                    </RippleButton>
+                  </div>
+                ))
               )}
             </>
           )}
@@ -291,11 +308,11 @@ const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ teamName, onNavigate 
                     <div className="text-3xl font-bold text-vintage-brown font-playfair mb-1">
                       <AnimatedCounter value={team.currentQuestion} />
                     </div>
-                    <div className="text-sm text-vintage-gray font-crimson">of {questions.length} clues</div>
+                    <div className="text-sm text-vintage-gray font-crimson">of {(typeof totalQuestions === 'number' ? totalQuestions : questions.length)} clues</div>
                     <div className="vintage-progress mt-3">
                       <div
                         className="vintage-progress-fill transition-all duration-300"
-                        style={{ width: `${(team.currentQuestion / questions.length) * 100}%` }}
+                        style={{ width: `${(team.currentQuestion / (typeof totalQuestions === 'number' ? totalQuestions : Math.max(questions.length, 1))) * 100}%` }}
                       />
                     </div>
                   </div>
