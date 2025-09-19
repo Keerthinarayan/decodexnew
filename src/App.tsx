@@ -20,7 +20,7 @@ function AppContent() {
   const { toasts, removeToast } = useToast();
   const { currentAnnouncement, dismissAnnouncement, markAnnouncementAsRead } = useAnnouncements();
 
-  useDisableDevTools(); // ⬅️ Apply globally
+  // useDisableDevTools(); // ⬅️ Apply globally
 
   const handleTeamLogin = (teamName: string) => {
     setCurrentTeam(teamName);
