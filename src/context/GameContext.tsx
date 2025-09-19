@@ -12,21 +12,6 @@ export const useGame = () => {
   return context;
 };
 
-useEffect(() => {
-    const detectDevTools = () => {
-      if (
-        window.outerHeight - window.innerHeight > 200 || 
-        window.outerWidth - window.innerWidth > 200
-      ) {
-        document.body.innerHTML = 'Access Denied';
-        window.location.href = '/access-denied';
-      }
-    };
-
-    window.addEventListener('resize', detectDevTools);
-    return () => window.removeEventListener('resize', detectDevTools);
-  }, []);
-
 interface GameProviderProps {
   children: ReactNode;
 }
