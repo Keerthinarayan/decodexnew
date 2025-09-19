@@ -11,7 +11,6 @@ import AnnouncementModal from './components/AnnouncementModal';
 import { GameProvider, useGame } from './context/GameContext';
 import { useToast } from './hooks/useToast';
 import { useAnnouncements } from './hooks/useAnnouncements';
-import { useDisableDevTools } from './hooks/useDisableDevTools'; // ⬅️ Import
 
 function AppContent() {
   const [currentView, setCurrentView] = useState<'landing' | 'player' | 'admin' | 'playerLogin' | 'adminLogin' | 'leaderboard'>('landing');
@@ -20,7 +19,7 @@ function AppContent() {
   const { toasts, removeToast } = useToast();
   const { currentAnnouncement, dismissAnnouncement, markAnnouncementAsRead } = useAnnouncements();
 
-  useDisableDevTools(); // ⬅️ Apply globally
+
 
   const handleTeamLogin = (teamName: string) => {
     setCurrentTeam(teamName);
