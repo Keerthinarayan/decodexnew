@@ -11,6 +11,7 @@ import AnnouncementModal from './components/AnnouncementModal';
 import { GameProvider, useGame } from './context/GameContext';
 import { useToast } from './hooks/useToast';
 import { useAnnouncements } from './hooks/useAnnouncements';
+import { useDisableDevTools } from './hooks/useDisableDevTools'; // ⬅️ Import
 
 function AppContent() {
   const [currentView, setCurrentView] = useState<'landing' | 'player' | 'admin' | 'playerLogin' | 'adminLogin' | 'leaderboard'>('landing');
@@ -18,6 +19,8 @@ function AppContent() {
   const { loading } = useGame();
   const { toasts, removeToast } = useToast();
   const { currentAnnouncement, dismissAnnouncement, markAnnouncementAsRead } = useAnnouncements();
+
+  useDisableDevTools(); // ⬅️ Apply globally
 
   const handleTeamLogin = (teamName: string) => {
     setCurrentTeam(teamName);
@@ -50,15 +53,12 @@ function AppContent() {
 
   return (
     <div className="min-h-screen vintage-paper overflow-hidden">
-      {/* Vintage Map Dots Background */}
       <div className="fixed inset-0 z-0">
         <VintageMapDots />
       </div>
 
-      {/* Toast Notifications */}
       <ToastContainer toasts={toasts} onRemoveToast={removeToast} />
 
-      {/* Global Announcement Modal */}
       {currentAnnouncement && (
         <AnnouncementModal
           announcement={currentAnnouncement}
@@ -66,7 +66,6 @@ function AppContent() {
         />
       )}
 
-      {/* Main Content */}
       <div className="relative z-10">
         {currentView === 'landing' && (
           <LandingPage 
