@@ -268,7 +268,15 @@ const VintagePathMap: React.FC<VintagePathMapProps> = ({
                 </div>
 
                 {/* Location Labels for Key Points */}
-                
+                {(index === 0 || index === Math.floor(questions.length / 2) || index === questions.length - 1) && (
+                  <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-center">
+                    <div className="vintage-badge px-3 py-1 rounded-full text-xs font-crimson">
+                      {index === 0 && "Investigation Start"}
+                      {index === Math.floor(questions.length / 2) && "Midpoint Checkpoint"}
+                      {index === questions.length - 1 && "Case Resolution"}
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
