@@ -101,6 +101,8 @@ useEffect(() => {
                 DecodeX
               </h1>
               
+             
+
               {/* Subtitle */}
               <div className="mb-6">
                 <div className="w-32 h-1 bg-vintage-brown mx-auto mb-4"></div>
@@ -117,6 +119,22 @@ useEffect(() => {
                   an extraordinary investigation into the mysteries of the electromagnetic spectrum. 
                   Gather your finest minds and embark upon this most challenging of intellectual pursuits.
                 </p>
+              </div>
+
+              {/* Event notice */}
+              <div className="mb-10 w-full">
+                <div className="event-banner rounded-xl px-6 py-6 text-center md:text-left max-w-2xl mx-auto">
+                  <span className="event-banner__tag">Service Update</span>
+                  <h3 className="event-banner__title">Event Concluded</h3>
+                  <p className="event-banner__body">
+                    The DecodeX investigation has officially wrapped. All backend infrastructure has been retired, so
+                    interactive features and login endpoints are no longer available.
+                  </p>
+                  <p className="event-banner__body">
+                    We appreciate every sleuth who joined the case. Feel free to explore the archives, but note that
+                    no further gameplay is possible.
+                  </p>
+                </div>
               </div>
 
               {/* Ornamental divider */}
