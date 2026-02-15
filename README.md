@@ -10,13 +10,30 @@ DecodeX is a React/TypeScript quiz application themed as "The Great Signal Myste
 - **State Management**: React Context (GameContext)
 - **Authentication**: Simple team-based authentication via Supabase
 
-## Key Features
+## 🕵️‍♂️ Key Features
 
-- **Branching Questions**: Questions can have easy/hard path choices
-- **Power-ups System**: Teams get hints, skips, double points, brain boost
-- **Real-time Updates**: Live leaderboard and game state changes
-- **Admin Panel**: Full question management, analytics, announcements
-- **Vintage UI Theme**: Complete detective/newspaper aesthetic with custom CSS
+### 🎮 Immersive Gameplay
+- **Vintage Detective Theme**: A fully styled "Great Signal Mystery" aesthetic with custom fonts, colors, and UI elements.
+- **Interactive Map**: Navigate through the game using a vintage-style path map.
+- **Real-time Leaderboard**: Live ranking of teams based on scores and completion time.
+- **Live Updates**: Real-time game state synchronization using Supabase.
+
+### 🧩 Advanced Question System
+- **Multi-Media Support**: Questions can include text, images, video, audio, and file attachments.
+- **Branching Narratives**: Strategic gameplay with "Speed Path" (Easy) vs "Challenge Path" (Hard) choices.
+- **Rich Feedback**: Immediate feedback on answers with detailed explanations.
+
+### ⚡ Power-Ups & Strategy
+- **Brain Boost**: Activate to earn double points for a limited time.
+- **Hint System**: Unlock clues for difficult puzzles.
+- **Question Skips**: Strategically bypass challenging questions.
+- **Double Points**: Multipliers for high-stakes answers.
+
+### 🛠️ Admin & Management
+- **Comprehensive Admin Panel**: Full control over questions, teams, and game flow.
+- **Bulk Operations**: Import/Export questions via CSV/JSON for easy management.
+- **Analytics Dashboard**: Track question performance and team progress stats.
+- **Global Announcements**: Send real-time messages to all active players.
 
 ## Development Commands
 
