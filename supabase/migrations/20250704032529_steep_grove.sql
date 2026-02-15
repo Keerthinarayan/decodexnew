@@ -1,20 +1,4 @@
-/*
-  # Fix branching question progression issue
-
-  1. Problem
-    - After answering a choice question, teams are redirected back to the branch question
-    - Teams get stuck in a loop between branch question and choice questions
-
-  2. Solution
-    - Update verify_answer_with_branching to properly advance after choice questions
-    - Ensure choice questions lead to the next main question in sequence
-    - Fix the progression logic to prevent loops
-
-  3. Changes
-    - Recreate verify_answer_with_branching function with proper progression logic
-    - Update select_question_choice to properly track choice selection
-    - Ensure teams advance to next main question after completing choice questions
-*/
+-- Fix branching question progression issue
 
 -- Drop the existing function
 DROP FUNCTION IF EXISTS verify_answer_with_branching(text, text);

@@ -1,15 +1,4 @@
-/*
-  # Fix get_next_question_for_team function
-
-  1. Function Updates
-    - Fix the `get_next_question_for_team` function to properly handle cases where no question is found
-    - Ensure `v_question` record is always properly initialized before use
-    - Add proper error handling for edge cases
-
-  2. Security
-    - Maintain existing RLS policies
-    - Ensure function works with authenticated users
-*/
+-- Fix get_next_question_for_team function
 
 -- Drop the existing function if it exists
 DROP FUNCTION IF EXISTS get_next_question_for_team(text);

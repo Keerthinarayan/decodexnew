@@ -1,17 +1,4 @@
-/*
-  # Fix Choice Selection Foreign Key Error and Answer Verification
-
-  1. Problem Fixes
-    - Foreign key constraint error when selecting choices
-    - Wrong answer detection for correct answers
-    - Choice question progression issues
-
-  2. Solutions
-    - Don't set current_question_id to choice question IDs (FK violation)
-    - Use question_path to track choice question state
-    - Fix answer verification with proper trimming and case handling
-    - Ensure proper progression after choice completion
-*/
+-- Fix Choice Selection Foreign Key Error and Answer Verification
 
 -- Drop and recreate the select_question_choice function
 DROP FUNCTION IF EXISTS select_question_choice(text, text);

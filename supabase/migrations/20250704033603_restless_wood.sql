@@ -1,17 +1,3 @@
-/*
-  # Fix Answer Verification Issues
-
-  1. Problem
-    - Correct answers are being marked as wrong
-    - Need better answer normalization and debugging
-
-  2. Solution
-    - Improve answer normalization (handle special characters, multiple spaces, etc.)
-    - Add better logging for debugging
-    - Handle both main questions and choice questions properly
-    - Fix case sensitivity and whitespace issues
-*/
-
 -- Drop and recreate the verify_answer_with_branching function with improved answer verification
 DROP FUNCTION IF EXISTS verify_answer_with_branching(text, text);
 
@@ -41,7 +27,6 @@ DECLARE
   v_updated_path jsonb;
   v_correct_answer text;
   v_provided_answer text;
-  v_debug_info jsonb;
 BEGIN
   -- Get team information
   SELECT * INTO v_team_record
@@ -71,18 +56,6 @@ BEGIN
       v_correct_answer := LOWER(TRIM(REGEXP_REPLACE(v_last_path_entry->>'choiceAnswer', '\s+', ' ', 'g')));
       v_is_correct := v_provided_answer = v_correct_answer;
       
-      -- Create debug info
-      v_debug_info := jsonb_build_object(
-        'question_type', 'choice',
-        'provided_answer', v_provided_answer,
-        'correct_answer', v_correct_answer,
-        'original_provided', p_answer,
-        'original_correct', v_last_path_entry->>'choiceAnswer',
-        'is_correct', v_is_correct
-      );
-      
-      RAISE NOTICE 'Choice Question Debug: %', v_debug_info;
-      
       IF v_is_correct THEN
         v_points_earned := (v_last_path_entry->>'choicePoints')::integer;
         
@@ -103,11 +76,6 @@ BEGIN
           v_updated_path, 
           array[jsonb_array_length(v_updated_path) - 1, 'userAnswer'], 
           to_jsonb(p_answer)
-        );
-        v_updated_path := jsonb_set(
-          v_updated_path, 
-          array[jsonb_array_length(v_updated_path) - 1, 'debug'], 
-          v_debug_info
         );
         
         -- Find the next main question after the branch question
@@ -144,20 +112,6 @@ BEGIN
     -- Normalize the correct answer (remove extra spaces, convert to lowercase, remove special chars)
     v_correct_answer := LOWER(TRIM(REGEXP_REPLACE(v_question_record.answer, '\s+', ' ', 'g')));
     v_is_correct := v_provided_answer = v_correct_answer;
-    
-    -- Create debug info
-    v_debug_info := jsonb_build_object(
-      'question_type', 'main',
-      'question_id', v_question_record.id,
-      'question_title', v_question_record.title,
-      'provided_answer', v_provided_answer,
-      'correct_answer', v_correct_answer,
-      'original_provided', p_answer,
-      'original_correct', v_question_record.answer,
-      'is_correct', v_is_correct
-    );
-    
-    RAISE NOTICE 'Main Question Debug: %', v_debug_info;
     
     IF v_is_correct THEN
       v_points_earned := v_question_record.points;
@@ -203,7 +157,6 @@ BEGIN
           'answer', p_answer,
           'correct', v_is_correct,
           'points', v_points_earned * v_brain_boost_multiplier,
-          'debug', v_debug_info,
           'timestamp', NOW()
         );
       ELSE
@@ -223,7 +176,6 @@ BEGIN
           'answer', p_answer,
           'correct', v_is_correct,
           'points', v_points_earned * v_brain_boost_multiplier,
-          'debug', v_debug_info,
           'timestamp', NOW()
         );
       END IF;
@@ -234,7 +186,6 @@ BEGIN
         'questionId', v_question_record.id,
         'answer', p_answer,
         'correct', false,
-        'debug', v_debug_info,
         'timestamp', NOW()
       );
     END IF;
@@ -302,8 +253,7 @@ BEGIN
     'next_question_id', v_next_question_id,
     'has_choices', COALESCE(v_question_record.is_branch_point, false) OR COALESCE(v_question_record.has_choices, false),
     'branch_choices', v_branch_choices,
-    'is_choice_question', v_is_choice_question,
-    'debug', v_debug_info
+    'is_choice_question', v_is_choice_question
   );
 
 EXCEPTION
@@ -322,44 +272,3 @@ $$;
 
 -- Grant execute permissions
 GRANT EXECUTE ON FUNCTION verify_answer_with_branching(text, text) TO authenticated, anon;
-
--- Also create a simple function to check what answers are stored in the database
-CREATE OR REPLACE FUNCTION debug_question_answers()
-RETURNS TABLE(
-  question_id uuid,
-  question_title text,
-  stored_answer text,
-  normalized_answer text,
-  question_type text
-)
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
-BEGIN
-  -- Return main questions
-  RETURN QUERY
-  SELECT 
-    q.id,
-    q.title,
-    q.answer,
-    LOWER(TRIM(REGEXP_REPLACE(q.answer, '\s+', ' ', 'g'))) as normalized,
-    'main'::text
-  FROM questions q
-  WHERE q.is_active = true
-  ORDER BY q.order_index;
-  
-  -- Return choice questions
-  RETURN QUERY
-  SELECT 
-    cq.id,
-    cq.title,
-    cq.answer,
-    LOWER(TRIM(REGEXP_REPLACE(cq.answer, '\s+', ' ', 'g'))) as normalized,
-    'choice'::text
-  FROM choice_questions cq
-  WHERE cq.is_active = true
-  ORDER BY cq.branch_question_id, cq.difficulty_level;
-END;
-$$;
-
-GRANT EXECUTE ON FUNCTION debug_question_answers() TO authenticated, anon;

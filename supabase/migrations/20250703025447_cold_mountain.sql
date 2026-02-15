@@ -1,19 +1,4 @@
-/*
-  # Fix verify_answer_with_branching function
-
-  1. Problem
-    - The function is trying to convert string "answered" to integer
-    - This causes "invalid input syntax for type integer" error
-
-  2. Solution
-    - Update the function to properly handle string/boolean conversions
-    - Ensure all integer operations use actual integer values
-    - Fix any incorrect data type usage in the function logic
-
-  3. Changes
-    - Recreate the verify_answer_with_branching function with proper type handling
-    - Add proper error handling and type checking
-*/
+-- Fix verify_answer_with_branching function
 
 -- Drop the existing function if it exists
 DROP FUNCTION IF EXISTS verify_answer_with_branching(text, text);
